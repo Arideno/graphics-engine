@@ -11,7 +11,7 @@ impl Ray {
         Ray { origin, direction: direction.normalize() }
     }
 
-    pub fn at(&self, t: f64) -> Point {
+    pub fn at(self, t: f64) -> Point {
         self.origin + self.direction * t
     }
 }
