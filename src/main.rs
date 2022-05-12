@@ -8,7 +8,7 @@ fn main() {
 
     scene.objects.push(Sphere::new(Point::new(0., 0., -1.), 0.5).into());
     scene.objects.push(Plane::new(Vector::new(0., 0., -1.), Point::new(0., 0., -1.)).into());
-    scene.lights.push(Directional { direction: (1., 1., 1.).into() }.into());
+    scene.lights.push(Directional { direction: Vector::new(1., 1., 1.).normalize() }.into());
     
     let mut buffer = [' '; (WIDTH * HEIGHT) as usize];
 
