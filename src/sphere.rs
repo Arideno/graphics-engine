@@ -1,4 +1,4 @@
-use crate::{point::Point, ray::Ray};
+use crate::{point::Point, ray::Ray, intersection::Intersection};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Sphere {
@@ -11,7 +11,7 @@ impl Sphere {
         Sphere { center, radius }
     }
 
-    pub fn intersect(&self, ray: Ray) -> Option<f64> {
+    pub fn intersect(self, ray: Ray) -> Option<Intersection> {
         let oc = ray.origin - self.center;
         let a = ray.direction.len_sq();
         let half_b = oc.dot(ray.direction);
@@ -22,11 +22,17 @@ impl Sphere {
             let root = discriminant.sqrt();
             let t = (-half_b - root) / a;
             if t > 0.0 {
-                Some(t)
+                Some(Intersection {
+                    t,
+                    object: self.into()
+                })
             } else {
                 let t = (-half_b + root) / a;
                 if t > 0.0 {
-                    Some(t)
+                    Some(Intersection {
+                        t,
+                        object: self.into()
+                    })
                 } else {
                     None
                 }

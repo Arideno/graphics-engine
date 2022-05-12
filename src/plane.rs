@@ -1,4 +1,4 @@
-use crate::{point::Point, vector::Vector, ray::Ray};
+use crate::{point::Point, vector::Vector, ray::Ray, intersection::Intersection};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Plane {
@@ -11,13 +11,16 @@ impl Plane {
         Plane { normal, point }
     }
 
-    pub fn intersect(&self, ray: Ray) -> Option<f64> {
+    pub fn intersect(self, ray: Ray) -> Option<Intersection> {
         let denominator = self.normal.dot(ray.direction);
         if denominator > 0. {
-            let numerator = self.normal.dot(ray.origin - self.point);
+            let numerator = self.normal.dot(self.point - ray.origin);
             let t = numerator / denominator;
             if t >= 0.0 {
-                Some(t)
+                Some(Intersection {
+                    t,
+                    object: self.into()
+                })
             } else {
                 None
             }

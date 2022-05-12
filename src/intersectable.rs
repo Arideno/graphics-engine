@@ -1,12 +1,13 @@
-use crate::{ray::Ray, sphere::Sphere, plane::Plane};
+use crate::{ray::Ray, sphere::Sphere, plane::Plane, intersection::Intersection};
 
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Intersectable {
     Sphere(Sphere),
     Plane(Plane)
 }
 
 impl Intersectable {
-    pub fn intersect(&self, ray: Ray) -> Option<f64> {
+    pub fn intersect(self, ray: Ray) -> Option<Intersection> {
         match self {
             Intersectable::Sphere(sphere) => sphere.intersect(ray),
             Intersectable::Plane(plane) => plane.intersect(ray)
