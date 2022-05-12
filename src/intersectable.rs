@@ -1,4 +1,4 @@
-use crate::{ray::Ray, sphere::Sphere, plane::Plane, intersection::Intersection};
+use crate::{ray::Ray, sphere::Sphere, plane::Plane, intersection::Intersection, impl_froms, point::Point, vector::Vector};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Intersectable {
@@ -13,17 +13,12 @@ impl Intersectable {
             Intersectable::Plane(plane) => plane.intersect(ray)
         }
     }
-}
 
-macro_rules! impl_froms {
-    ($n:ident: $($x:ident),*) => {
-        $(
-            impl From<$x> for $n {
-                fn from(x: $x) -> $n {
-                    $n::$x(x)
-                }
-            }
-        )*
+    pub fn normal_at_point(self, point: Point) -> Vector {
+        match self {
+            Intersectable::Sphere(sphere) => sphere.normal_at_point(point),
+            Intersectable::Plane(plane) => plane.normal_at_point(point)
+        }
     }
 }
 

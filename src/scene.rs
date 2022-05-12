@@ -1,15 +1,17 @@
-use crate::{intersectable::Intersectable, camera::Camera, ray::Ray};
+use crate::{intersectable::Intersectable, camera::Camera, ray::Ray, light::Light};
 
 pub struct Scene {
     pub camera: Camera,
     pub objects: Vec<Intersectable>,
+    pub lights: Vec<Light>,
 }
 
 impl Scene {
-    pub fn new(camera: Camera, objects: Vec<Intersectable>) -> Self {
+    pub fn new(camera: Camera, objects: Vec<Intersectable>, lights: Vec<Light>) -> Self {
         Self {
             camera,
             objects,
+            lights
         }
     }
 

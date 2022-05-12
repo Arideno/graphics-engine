@@ -1,4 +1,4 @@
-use crate::{point::Point, ray::Ray, intersection::Intersection};
+use crate::{point::Point, ray::Ray, intersection::Intersection, vector::Vector};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Sphere {
@@ -40,5 +40,9 @@ impl Sphere {
         } else {
             None
         }
+    }
+
+    pub fn normal_at_point(self, point: Point) -> Vector {
+        (point - self.center).normalize()
     }
 }

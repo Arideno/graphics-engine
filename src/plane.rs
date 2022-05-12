@@ -28,4 +28,8 @@ impl Plane {
             None
         }
     }
+
+    pub fn normal_at_point(self, _point: Point) -> Vector {
+        -self.normal
+    }
 }

@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign};
+use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, Neg};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector {
@@ -107,5 +107,12 @@ impl DivAssign<f64> for Vector {
         self.x /= rhs;
         self.y /= rhs;
         self.z /= rhs;
+    }
+}
+
+impl Neg for Vector {
+    type Output = Vector;
+    fn neg(self) -> Self::Output {
+        Vector::new(-self.x, -self.y, -self.z)
     }
 }

@@ -7,3 +7,5 @@ pub mod camera;
 pub mod intersectable;
 pub mod intersection;
 pub mod scene;
+pub mod light;
+pub mod macros;
