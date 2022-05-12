@@ -11,7 +11,7 @@ impl Plane {
         Plane { normal, point }
     }
 
-    pub fn intersect(self, ray: Ray) -> Option<f64> {
+    pub fn intersect(&self, ray: Ray) -> Option<f64> {
         let denominator = self.normal.dot(ray.direction);
         if denominator > 0. {
             let numerator = self.normal.dot(ray.origin - self.point);

@@ -2,10 +2,10 @@ use crate::{point::Point, vector::Vector, ray::Ray};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Camera {
-    origin: Point,
+    pub origin: Point,
     lower_left_corner: Point,
     horizontal: Vector,
-    vertical: Vector,
+    pub vertical: Vector,
     width: u32,
     height: u32,
 }

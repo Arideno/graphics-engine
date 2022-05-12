@@ -11,7 +11,7 @@ impl Sphere {
         Sphere { center, radius }
     }
 
-    pub fn intersect(self, ray: Ray) -> Option<f64> {
+    pub fn intersect(&self, ray: Ray) -> Option<f64> {
         let oc = ray.origin - self.center;
         let a = ray.direction.len_sq();
         let half_b = oc.dot(ray.direction);

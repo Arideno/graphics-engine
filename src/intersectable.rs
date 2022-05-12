@@ -6,7 +6,7 @@ pub enum Intersectable {
 }
 
 impl Intersectable {
-    pub fn intersect(self, ray: Ray) -> Option<f64> {
+    pub fn intersect(&self, ray: Ray) -> Option<f64> {
         match self {
             Intersectable::Sphere(sphere) => sphere.intersect(ray),
             Intersectable::Plane(plane) => plane.intersect(ray)
