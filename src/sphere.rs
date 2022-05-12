@@ -24,6 +24,7 @@ impl Sphere {
             if t > 0.0 {
                 Some(Intersection {
                     t,
+                    point: ray.at(t),
                     object: self.into()
                 })
             } else {
@@ -31,6 +32,7 @@ impl Sphere {
                 if t > 0.0 {
                     Some(Intersection {
                         t,
+                        point: ray.at(t),
                         object: self.into()
                     })
                 } else {

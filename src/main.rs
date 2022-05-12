@@ -12,7 +12,7 @@ fn main() {
     
     let mut buffer = [' '; (WIDTH * HEIGHT) as usize];
 
-    for y in 0..HEIGHT {
+    for y in (0..HEIGHT).rev() {
         for x in 0..WIDTH {
             let ray = scene.ray_for_pixel(x, y);
 
@@ -21,12 +21,12 @@ fn main() {
 
             for object in &scene.objects {
                 if let Some(intersection) = object.intersect(ray) {
-                    let Intersection { t, object } = intersection;
+                    let Intersection { t, point, object } = intersection;
                     if t < min_t {
                         min_t = t;
                         match scene.lights[0] {
                             Light::Directional(light) => {
-                                let normal = object.normal_at_point(ray.at(t));
+                                let normal = object.normal_at_point(point);
                                 let product = light.direction.dot(normal);
                                 if product < 0. {
                                     symbol = ' ';
@@ -49,7 +49,7 @@ fn main() {
         }
     }
 
-    for y in 0..HEIGHT {
+    for y in (0..HEIGHT).rev() {
         for x in 0..WIDTH {
             print!("{}", buffer[(y * WIDTH + x) as usize]);
         }

@@ -19,6 +19,7 @@ impl Plane {
             if t >= 0.0 {
                 Some(Intersection {
                     t,
+                    point: ray.at(t),
                     object: self.into()
                 })
             } else {
