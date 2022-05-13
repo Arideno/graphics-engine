@@ -12,9 +12,9 @@ impl Plane {
     }
 
     pub fn intersect(self, ray: Ray) -> Option<Intersection> {
-        let denominator = self.normal.dot(ray.direction);
+        let denominator = -self.normal.dot(ray.direction);
         if denominator > 0. {
-            let numerator = self.normal.dot(self.point - ray.origin);
+            let numerator = -self.normal.dot(self.point - ray.origin);
             let t = numerator / denominator;
             if t >= 0.0 {
                 Some(Intersection {
@@ -31,6 +31,6 @@ impl Plane {
     }
 
     pub fn normal_at_point(self, _point: Point) -> Vector {
-        -self.normal
+        self.normal
     }
 }

@@ -7,8 +7,8 @@ fn main() {
     let mut scene = Scene::new(Camera::new(Point::new(0., 0., 0.), 90., WIDTH as f64 / HEIGHT as f64, HEIGHT), vec![], vec![]);
 
     scene.objects.push(Sphere::new(Point::new(0., 0., -1.), 0.5).into());
-    scene.objects.push(Plane::new(Vector::new(0., 0., -1.), Point::new(0., 0., -1.)).into());
-    scene.lights.push(Directional { direction: Vector::new(1., 1., 1.).normalize() }.into());
+    scene.objects.push(Plane::new(Vector::new(0., 0., 1.), Point::new(0., 0., -1.)).into());
+    scene.lights.push(Directional { direction: Vector::new(-1., -1., -1.).normalize() }.into());
     
     let mut buffer = [' '; (WIDTH * HEIGHT) as usize];
 
@@ -27,7 +27,7 @@ fn main() {
                         match scene.lights[0] {
                             Light::Directional(light) => {
                                 let normal = object.normal_at_point(point);
-                                let product = light.direction.dot(normal);
+                                let product = -light.direction.dot(normal);
                                 if product < 0. {
                                     symbol = ' ';
                                 } else if product < 0.2 {
