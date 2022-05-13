@@ -12,34 +12,28 @@ fn main() {
     
     let mut buffer = [' '; (WIDTH * HEIGHT) as usize];
 
-    for y in (0..HEIGHT).rev() {
+    for y in 0..HEIGHT {
         for x in 0..WIDTH {
-            let ray = scene.ray_for_pixel(x, y);
+            let ray = scene.ray_for_pixel(x, HEIGHT - y - 1);
 
-            let mut min_t = std::f64::MAX;
             let mut symbol = ' ';
 
-            for object in &scene.objects {
-                if let Some(intersection) = object.intersect(ray) {
-                    let Intersection { t, point, object } = intersection;
-                    if t < min_t {
-                        min_t = t;
-                        match scene.lights[0] {
-                            Light::Directional(light) => {
-                                let normal = object.normal_at_point(point);
-                                let product = -light.direction.dot(normal);
-                                if product < 0. {
-                                    symbol = ' ';
-                                } else if product < 0.2 {
-                                    symbol = '.';
-                                } else if product < 0.5 {
-                                    symbol = '*';
-                                } else if product < 0.8 {
-                                    symbol = 'O';
-                                } else {
-                                    symbol = '#';
-                                }
-                            }
+            if let Some(intersection) = scene.intersect(ray) {
+                let Intersection { point, object, .. } = intersection;
+                match scene.lights[0] {
+                    Light::Directional(light) => {
+                        let normal = object.normal_at_point(point);
+                        let product = -light.direction.dot(normal);
+                        if product < 0. {
+                            symbol = ' ';
+                        } else if product < 0.2 {
+                            symbol = '.';
+                        } else if product < 0.5 {
+                            symbol = '*';
+                        } else if product < 0.8 {
+                            symbol = 'O';
+                        } else {
+                            symbol = '#';
                         }
                     }
                 }
@@ -49,7 +43,7 @@ fn main() {
         }
     }
 
-    for y in (0..HEIGHT).rev() {
+    for y in 0..HEIGHT {
         for x in 0..WIDTH {
             print!("{}", buffer[(y * WIDTH + x) as usize]);
         }
