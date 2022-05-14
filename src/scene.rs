@@ -33,3 +33,38 @@ impl Scene {
         closest_intersection
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use crate::{intersectable::Intersectable, point::Point, sphere::Sphere, vector::Vector, plane::Plane};
+
+    use super::*;
+
+    #[test]
+    fn test_intersect() {
+        let center1 = Point::new(0., 5., 0.);
+        let radius1 = 2.;
+        let sphere1 = Sphere::new(center1, radius1);
+        let center2 = Point::new(0., -5., 0.);
+        let radius2 = 1.;
+        let sphere2 = Sphere::new(center2, radius2);
+        let point = Point::new(0., 0., 0.);
+        let normal = Vector::new(0., 1., 0.);
+        let plane = Plane::new(normal, point);
+        let objects: Vec<Intersectable> = vec![sphere1.into(), sphere2.into(), plane.into()];
+        let camera = Camera::new(Point::new(0., 0., 0.), 0., 0., 0);
+        let scene = Scene::new(camera, objects, vec![]);
+        let origin = Point::new(0., 20., 0.);
+        let direction = Vector::new(0., -1., 0.);
+        let ray = Ray::new(origin, direction);
+        let intersection = scene.intersect(ray);
+        if let Some(intersection) = intersection {
+            assert_eq!(Point::new(0., 7., 0.), intersection.point);
+            assert_eq!(13., intersection.t);
+            assert_eq!(Intersectable::from(sphere1), intersection.object);
+        } else {
+            panic!("No intersection");
+        }
+    }
+}
