@@ -34,3 +34,47 @@ impl Plane {
         self.normal
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use crate::intersectable::Intersectable;
+
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let point = Point::new(5., 5., 4.);
+        let vector = Vector::new(3., 0., 4.);
+        let plane = Plane::new(vector, point);
+        assert_eq!(vector, plane.normal);
+        assert_eq!(point, plane.point);
+    }
+
+    #[test]
+    fn test_intersect() {
+        let point = Point::new(0., 0., 0.);
+        let normal = Vector::new(0., 1., 0.);
+        let plane = Plane::new(normal, point);
+        let origin = Point::new(0., 1., 1.);
+        let direction = Vector::new(0., -1., -1.);
+        let ray = Ray::new(origin, direction);
+        let intersection = plane.intersect(ray);
+        if let Some(intersection) = intersection {
+            assert_eq!(Point::new(0., 0., 0.), intersection.point);
+            assert_eq!((2f64).sqrt(), intersection.t);
+            assert_eq!(Intersectable::from(plane), intersection.object);
+        } else {
+            panic!("No intersection");
+        }
+    }
+
+    #[test]
+    fn test_normal_at_point() {
+        let point = Point::new(5., 5., 4.);
+        let vector = Vector::new(3., 0., 4.);
+        let plane = Plane::new(vector, point);
+        let result  = plane.normal_at_point(point);
+        assert_eq!(result, plane.normal);
+    }
+}
