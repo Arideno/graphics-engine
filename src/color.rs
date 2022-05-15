@@ -2,14 +2,14 @@ use std::ops::{Mul, MulAssign, Add, AddAssign};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
-    pub r: u32,
-    pub g: u32,
-    pub b: u32
+    pub r: u8,
+    pub g: u8,
+    pub b: u8
 }
 
 impl Color {
     pub fn new(r: u8, g: u8, b: u8) -> Color {
-        Color { r: r as u32, g: g as u32, b: b as u32 }
+        Color { r, g, b }
     }
 }
 
@@ -47,8 +47,8 @@ impl Mul<f64> for Color {
 
 impl MulAssign<f64> for Color {
     fn mul_assign(&mut self, rhs: f64) {
-        self.r = (self.r as f64 * rhs) as u32;
-        self.g = (self.g as f64 * rhs) as u32;
-        self.b = (self.b as f64 * rhs) as u32;
+        self.r = (self.r as f64 * rhs) as u8;
+        self.g = (self.g as f64 * rhs) as u8;
+        self.b = (self.b as f64 * rhs) as u8;
     }
 }
