@@ -58,3 +58,51 @@ impl Triangle {
         normal
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::intersectable::Intersectable;
+
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let v0 = Point::new(-0.5, 0., 0.);
+        let v1 = Point::new(0., 1., 0.);
+        let v2 = Point::new(0.5, 0., 0.);
+        let triangle = Triangle::new(v0, v1, v2, None);
+        assert_eq!(v0, triangle.v0);
+        assert_eq!(v1, triangle.v1);
+        assert_eq!(v2, triangle.v2);
+    }
+
+    #[test]
+    fn test_intersect() {
+        let v0 = Point::new(-0.5, 0., 0.);
+        let v1 = Point::new(0., 1., 0.);
+        let v2 = Point::new(0.5, 0., 0.);
+        let triangle = Triangle::new(v0, v1, v2, None);
+        let origin = Point::new(0., 0.5, 1.);
+        let direction = Vector::new(0., 0., -1.);
+        let ray = Ray::new(origin, direction);
+        let intersection = triangle.intersect(ray);
+        if let Some(intersection) = intersection {
+            assert_eq!(Point::new(0., 0.5, 0.), intersection.point);
+            assert_eq!(1., intersection.t);
+            assert_eq!(Intersectable::from(triangle), intersection.object);
+        } else {
+            panic!("No intersection");
+        }
+    }
+
+    #[test]
+    fn test_normal_at_point() {
+        let v0 = Point::new(-0.5, 0., 0.);
+        let v1 = Point::new(0., 1., 0.);
+        let v2 = Point::new(0.5, 0., 0.);
+        let triangle = Triangle::new(v0, v1, v2, None);
+        let point = Point::new(5., 5., 9.);
+        let result = triangle.normal_at_point(point);
+        assert_eq!(Vector::new(0., 0., 1.), result);
+    }
+}
