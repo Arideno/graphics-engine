@@ -9,3 +9,6 @@ pub mod intersection;
 pub mod scene;
 pub mod light;
 pub mod macros;
+pub mod renderer;
+pub mod color;
+pub mod triangle;

@@ -1,52 +1,16 @@
-use graphics_engine::{camera::Camera, point::Point, scene::Scene, sphere::Sphere, intersection::Intersection, plane::Plane, vector::Vector, light::{Light, Directional}};
+use graphics_engine::{camera::Camera, point::Point, scene::Scene, sphere::Sphere, plane::Plane, vector::Vector, light::{Directional}, renderer::{Renderer, Png}, triangle::Triangle};
 
-const WIDTH: u32 = 20;
-const HEIGHT: u32 = 20;
+const WIDTH: u32 = 1920;
+const HEIGHT: u32 = 1080;
 
 fn main() {
-    let mut scene = Scene::new(Camera::new(Point::new(0., 0., 0.), 90., WIDTH as f64 / HEIGHT as f64, HEIGHT), vec![], vec![]);
+    let mut scene = Scene::new(Camera::new(Point::new(0., 0., 1.), 90., WIDTH as f64 / HEIGHT as f64, HEIGHT), vec![], vec![]);
 
-    scene.objects.push(Sphere::new(Point::new(0., 0., -1.), 0.5).into());
+    scene.objects.push(Sphere::new(Point::new(0., 0., -1.5), 0.7).into());
     scene.objects.push(Plane::new(Vector::new(0., 0., 1.), Point::new(0., 0., -1.)).into());
+    scene.objects.push(Triangle::new(Point::new(-0.5, 0., -0.5), Point::new(0., 1., -1.), Point::new(0.5, 0., -1.5), None).into());
     scene.lights.push(Directional { direction: Vector::new(-1., -1., -1.).normalize() }.into());
-    
-    let mut buffer = [' '; (WIDTH * HEIGHT) as usize];
 
-    for y in 0..HEIGHT {
-        for x in 0..WIDTH {
-            let ray = scene.ray_for_pixel(x, HEIGHT - y - 1);
-
-            let mut symbol = ' ';
-
-            if let Some(intersection) = scene.intersect(ray) {
-                let Intersection { point, object, .. } = intersection;
-                match scene.lights[0] {
-                    Light::Directional(light) => {
-                        let normal = object.normal_at_point(point);
-                        let product = -light.direction.dot(normal);
-                        if product < 0. {
-                            symbol = ' ';
-                        } else if product < 0.2 {
-                            symbol = '.';
-                        } else if product < 0.5 {
-                            symbol = '*';
-                        } else if product < 0.8 {
-                            symbol = 'O';
-                        } else {
-                            symbol = '#';
-                        }
-                    }
-                }
-            }
-
-            buffer[(y * WIDTH + x) as usize] = symbol;
-        }
-    }
-
-    for y in 0..HEIGHT {
-        for x in 0..WIDTH {
-            print!("{}", buffer[(y * WIDTH + x) as usize]);
-        }
-        println!();
-    }
+    let png_renderer: Renderer = Png::new(&scene, "test.png".to_owned(), WIDTH, HEIGHT).into();
+    png_renderer.render();
 }
