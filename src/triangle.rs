@@ -1,6 +1,5 @@
 use crate::{point::Point, intersection::Intersection, ray::Ray, vector::Vector};
 
-// create triangle struct with normals
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Triangle {
     pub v0: Point,

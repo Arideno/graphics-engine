@@ -4,7 +4,7 @@ use image::{Rgb, RgbImage};
 use pbr::ProgressBar;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use crate::{scene::Scene, intersection::Intersection, light::Light, color::Color};
+use crate::{scene::Scene, light::Light, color::Color, intersection::Intersection};
 
 pub enum Renderer<'a> {
     Console(Console<'a>),
@@ -41,7 +41,7 @@ impl<'a> Console<'a> {
                 let mut symbol = ' ';
 
                 if let Some(intersection) = self.scene.intersect(ray) {
-                    let Intersection { point, object, .. } = intersection;
+                    let Intersection { object, point, .. } = intersection;
                     match self.scene.lights[0] {
                         Light::Directional(light) => {
                             let normal = object.normal_at_point(point);
@@ -115,7 +115,7 @@ impl<'a> Png<'a> {
                 let mut color = Color::new(255, 255, 255);
 
                 if let Some(intersection) = self.scene.intersect(ray) {
-                    let Intersection { point, object, .. } = intersection;
+                    let Intersection { object, point, .. } = intersection;
                     match self.scene.lights[0] {
                         Light::Directional(light) => {
                             let normal = object.normal_at_point(point);

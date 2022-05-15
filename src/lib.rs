@@ -12,3 +12,4 @@ pub mod macros;
 pub mod renderer;
 pub mod color;
 pub mod triangle;
+pub mod mesh;
