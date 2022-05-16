@@ -33,10 +33,18 @@ impl Scene {
         closest_intersection
     }
 
+    pub fn add_intersectable(&mut self, intersectable: Intersectable) {
+        self.objects.push(intersectable);
+    }
+
     pub fn add_mesh(&mut self, mesh: Mesh) {
         for triangle in mesh.triangles {
             self.objects.push(triangle.into());
         }
+    }
+
+    pub fn add_light(&mut self, light: Light) {
+        self.lights.push(light);
     }
 }
 
