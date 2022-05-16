@@ -1,4 +1,4 @@
-use crate::{intersectable::Intersectable, camera::Camera, ray::Ray, light::Light, intersection::Intersection};
+use crate::{intersectable::Intersectable, camera::Camera, ray::Ray, light::Light, intersection::Intersection, mesh::Mesh};
 
 pub struct Scene {
     pub camera: Camera,
@@ -31,6 +31,12 @@ impl Scene {
         }
 
         closest_intersection
+    }
+
+    pub fn add_mesh(&mut self, mesh: Mesh) {
+        for triangle in mesh.triangles {
+            self.objects.push(triangle.into());
+        }
     }
 }
 
