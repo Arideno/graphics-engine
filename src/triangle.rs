@@ -55,23 +55,21 @@ impl Triangle {
         if let Some(n1) = self.n1 {
             if let Some(n2) = self.n2 {
                 if let Some(n3) = self.n3 {
-                    let v0 = self.v0 - point;
-                    let v1 = self.v1 - point;
-                    let v2 = self.v2 - point;
-
-                    let u = v1.cross(v2).dot(n1) / n1.dot(n1);
-                    let v = v2.cross(v0).dot(n2) / n2.dot(n2);
-                    let w = v0.cross(v1).dot(n3) / n3.dot(n3);
-
-                    return n1 * u + n2 * v + n3 * w;
+                    let s1 = (self.v0 - point).len();
+                    let s2 = (self.v1 - point).len();
+                    let s3 = (self.v2 - point).len();
+                    let s_sum = s1 + s2 + s3;
+                    let s1 = s1 / s_sum;
+                    let s2 = s2 / s_sum;
+                    let s3 = s3 / s_sum;
+                    return n1 * s1 + n2 * s2 + n3 * s3;
                 }
             }
         }
-
+        
         let e1 = self.v1 - self.v0;
         let e2 = self.v2 - self.v0;
-
-        e2.cross(e1).normalize()
+        e1.cross(e2).normalize()
     }
 }
 

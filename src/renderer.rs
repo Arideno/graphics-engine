@@ -118,7 +118,10 @@ impl<'a> Png<'a> {
                     let Intersection { object, point, .. } = intersection;
                     match self.scene.lights[0] {
                         Light::Directional(light) => {
-                            let normal = object.normal_at_point(point);
+                            let mut normal = object.normal_at_point(point);
+                            if ray.direction.dot(normal) > 0. {
+                                normal = -normal;
+                            }
                             let product = -light.direction.dot(normal);
                             color *= product;
                         }
