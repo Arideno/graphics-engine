@@ -112,18 +112,21 @@ impl<'a> Png<'a> {
             .map(|(x, y)| {
                 let ray = self.scene.ray_for_pixel(x, self.height - y - 1);
 
-                let mut color = Color::new(255, 255, 255);
+                let mut color = Color::new(0, 0, 0);
 
                 if let Some(intersection) = self.scene.intersect(ray) {
                     let Intersection { object, point, .. } = intersection;
-                    match self.scene.lights[0] {
-                        Light::Directional(light) => {
-                            let mut normal = object.normal_at_point(point);
-                            if ray.direction.dot(normal) > 0. {
-                                normal = -normal;
+                    for l in &self.scene.lights {
+                        match l {
+                            Light::Directional(light) => {
+                                let normal = object.normal_at_point(point);
+                                let product = -light.direction.dot(normal);
+                                if product < 0. {
+                                    continue;
+                                }
+
+                                color += Color::new(255, 255, 255) * product;
                             }
-                            let product = -light.direction.dot(normal);
-                            color *= product;
                         }
                     }
                 }

@@ -25,6 +25,7 @@ fn main() {
     let mesh = Mesh::from_model(args.source.as_str()).unwrap();
     scene.add_mesh(mesh.apply_transform(&Matrix::scale(0.5, 0.5, 0.5)).apply_transform(&Matrix::rotate_y(3.14 / 6.)).apply_transform(&Matrix::rotate_x(-3.14 / 6.)));
     scene.add_light(Directional { direction: Vector::new(-1., -1., -1.).normalize() }.into());
+    scene.add_light(Directional { direction: Vector::new(1., 1., -1.).normalize() }.into());
 
     let png_renderer: Renderer = Png::new(&scene, args.output, WIDTH, HEIGHT).into();
     png_renderer.render();
