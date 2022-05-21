@@ -13,3 +13,4 @@ pub mod renderer;
 pub mod color;
 pub mod triangle;
 pub mod mesh;
+pub mod matrix;

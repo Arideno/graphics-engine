@@ -1,13 +1,13 @@
-use crate::{point::Point, ray::Ray, intersection::Intersection, vector::Vector};
+use crate::{point::Point, ray::Ray, intersection::Intersection, vector::Vector, matrix::Matrix};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Sphere {
     pub center: Point,
-    pub radius: f64
+    pub radius: f32
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64) -> Sphere {
+    pub fn new(center: Point, radius: f32) -> Sphere {
         Sphere { center, radius }
     }
 
@@ -47,8 +47,14 @@ impl Sphere {
     pub fn normal_at_point(self, point: Point) -> Vector {
         (point - self.center).normalize()
     }
-}
 
+    pub fn apply_transform(self, transform: &Matrix) -> Sphere {
+        Sphere {
+            center: (&transform.multiply(&self.center.into())).into(),
+            radius: self.radius
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {

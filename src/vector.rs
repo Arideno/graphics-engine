@@ -1,18 +1,20 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, Neg};
 
+use crate::{matrix::Matrix, m};
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vector {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64
+    pub x: f32,
+    pub y: f32,
+    pub z: f32
 }
 
 impl Vector {
-    pub fn new(x: f64, y: f64, z: f64) -> Vector {
+    pub fn new(x: f32, y: f32, z: f32) -> Vector {
         Vector { x, y, z }
     }
 
-    pub fn dot(self, other: Vector) -> f64 {
+    pub fn dot(self, other: Vector) -> f32 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
@@ -24,21 +26,25 @@ impl Vector {
         )
     }
 
-    pub fn len(self) -> f64 {
+    pub fn len(self) -> f32 {
         self.dot(self).sqrt()
     }
 
-    pub fn len_sq(self) -> f64 {
+    pub fn len_sq(self) -> f32 {
         self.dot(self)
     }
 
     pub fn normalize(self) -> Vector {
         self / self.len()
     }
+
+    pub fn apply_transform(self, transform: &Matrix) -> Vector {
+        (&transform.multiply(&self.into())).into()
+    }
 }
 
-impl From <(f64, f64, f64)> for Vector {
-    fn from (tuple: (f64, f64, f64)) -> Vector {
+impl From <(f32, f32, f32)> for Vector {
+    fn from (tuple: (f32, f32, f32)) -> Vector {
         Vector { x: tuple.0, y: tuple.1, z: tuple.2 }
     }
 }
@@ -73,37 +79,37 @@ impl SubAssign<Vector> for Vector {
     }
 }
 
-impl Mul<f64> for Vector {
+impl Mul<f32> for Vector {
     type Output = Vector;
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: f32) -> Self::Output {
         Vector::new(self.x * rhs, self.y * rhs, self.z * rhs)
     }
 }
 
-impl Mul<Vector> for f64 {
+impl Mul<Vector> for f32 {
     type Output = Vector;
     fn mul(self, rhs: Vector) -> Self::Output {
         Vector::new(self * rhs.x, self * rhs.y, self * rhs.z)
     }
 }
 
-impl MulAssign<f64> for Vector {
-    fn mul_assign(&mut self, rhs: f64) {
+impl MulAssign<f32> for Vector {
+    fn mul_assign(&mut self, rhs: f32) {
         self.x *= rhs;
         self.y *= rhs;
         self.z *= rhs;
     }
 }
 
-impl Div<f64> for Vector {
+impl Div<f32> for Vector {
     type Output = Vector;
-    fn div(self, rhs: f64) -> Self::Output {
+    fn div(self, rhs: f32) -> Self::Output {
         Vector::new(self.x / rhs, self.y / rhs, self.z / rhs)
     }
 }
 
-impl DivAssign<f64> for Vector {
-    fn div_assign(&mut self, rhs: f64) {
+impl DivAssign<f32> for Vector {
+    fn div_assign(&mut self, rhs: f32) {
         self.x /= rhs;
         self.y /= rhs;
         self.z /= rhs;
@@ -114,6 +120,27 @@ impl Neg for Vector {
     type Output = Vector;
     fn neg(self) -> Self::Output {
         Vector::new(-self.x, -self.y, -self.z)
+    }
+}
+
+impl From<&Matrix> for Vector {
+    fn from(matrix: &Matrix) -> Vector {
+        if matrix.rows == 4 {
+            Vector::new(matrix.get(0, 0), matrix.get(1, 0), matrix.get(2, 0))
+        } else {
+            Vector::new(matrix.get(0, 0), matrix.get(0, 1), matrix.get(0, 2))
+        }
+    }
+}
+
+impl Into<Matrix> for Vector {
+    fn into(self) -> Matrix {
+        m! [
+            self.x;
+            self.y;
+            self.z;
+            1.
+        ]
     }
 }
 
@@ -168,8 +195,8 @@ mod tests {
         let result2 = v2.len();
         let result3 = v3.len();
         assert_eq!(5., result1);
-        assert_eq!((90f64).sqrt(), result2);
-        assert_eq!((3f64).sqrt(), result3);
+        assert_eq!((90f32).sqrt(), result2);
+        assert_eq!((3f32).sqrt(), result3);
     }   
 
     #[test]

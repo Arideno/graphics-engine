@@ -1,22 +1,26 @@
 use std::ops::{Sub, Add};
 
-use crate::vector::Vector;
+use crate::{vector::Vector, matrix::Matrix, m};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Point {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64
+    pub x: f32,
+    pub y: f32,
+    pub z: f32
 }
 
 impl Point {
-    pub fn new(x: f64, y: f64, z: f64) -> Point {
+    pub fn new(x: f32, y: f32, z: f32) -> Point {
         Point { x, y, z }
+    }
+
+    pub fn apply_transform(self, transform: Matrix) -> Point {
+        (&transform.multiply(&self.into())).into()
     }
 }
 
-impl From <(f64, f64, f64)> for Point {
-    fn from (tuple: (f64, f64, f64)) -> Point {
+impl From <(f32, f32, f32)> for Point {
+    fn from (tuple: (f32, f32, f32)) -> Point {
         Point { x: tuple.0, y: tuple.1, z: tuple.2 }
     }
 }
@@ -44,6 +48,26 @@ impl Sub<Vector> for Point {
     }
 }
 
+impl From<&Matrix> for Point {
+    fn from(matrix: &Matrix) -> Point {
+        if matrix.rows == 4 {
+            Point::new(matrix.get(0, 0), matrix.get(1, 0), matrix.get(2, 0))
+        } else {
+            Point::new(matrix.get(0, 0), matrix.get(0, 1), matrix.get(0, 2))
+        }
+    }
+}
+
+impl Into<Matrix> for Point {
+    fn into(self) -> Matrix {
+        m! [
+            self.x;
+            self.y;
+            self.z;
+            1.
+        ]
+    }
+}
 
 #[cfg(test)]
 mod tests {

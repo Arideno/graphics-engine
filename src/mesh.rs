@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::{triangle::{Triangle}, point::Point, vector::Vector};
+use crate::{triangle::{Triangle}, point::Point, vector::Vector, matrix::Matrix};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Mesh {
@@ -20,14 +20,14 @@ impl Mesh {
         for line in contents.lines() {
             let parsed_line: Vec<&str> = line.split(" ").collect();
             if parsed_line[0] == "v" {
-                let x = parsed_line[1].parse::<f64>().unwrap();
-                let y = parsed_line[2].parse::<f64>().unwrap();
-                let z = parsed_line[3].parse::<f64>().unwrap();
+                let x = parsed_line[1].parse::<f32>().unwrap();
+                let y = parsed_line[2].parse::<f32>().unwrap();
+                let z = parsed_line[3].parse::<f32>().unwrap();
                 points.push(Point::new(x, y, z));
             } else if parsed_line[0] == "vn" {
-                let x = parsed_line[1].parse::<f64>().unwrap();
-                let y = parsed_line[2].parse::<f64>().unwrap();
-                let z = parsed_line[3].parse::<f64>().unwrap();
+                let x = parsed_line[1].parse::<f32>().unwrap();
+                let y = parsed_line[2].parse::<f32>().unwrap();
+                let z = parsed_line[3].parse::<f32>().unwrap();
                 normals.push(Vector::new(x, y, z));
             } else if parsed_line[0] == "f" {
                 let mut triangle_data = Vec::with_capacity(3);
@@ -61,6 +61,17 @@ impl Mesh {
         Some(Mesh {
             triangles
         })
+    }
+
+    pub fn apply_transform(&self, transform: &Matrix) -> Mesh {
+        let mut new_triangles = vec![];
+        for triangle in &self.triangles {
+            let new_triangle = triangle.apply_transform(transform);
+            new_triangles.push(new_triangle);
+        }
+        Mesh {
+            triangles: new_triangles
+        }
     }
 }
 

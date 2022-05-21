@@ -1,4 +1,4 @@
-use crate::{point::Point, vector::Vector, ray::Ray, intersection::Intersection};
+use crate::{point::Point, vector::Vector, ray::Ray, intersection::Intersection, matrix::Matrix};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Plane {
@@ -33,8 +33,14 @@ impl Plane {
     pub fn normal_at_point(self, _point: Point) -> Vector {
         self.normal
     }
-}
 
+    pub fn apply_transform(self, transform: &Matrix) -> Plane {
+        Plane {
+            normal: Vector::from(&transform.multiply(&self.normal.into())).normalize(),
+            point: (&transform.multiply(&self.point.into())).into()
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -62,7 +68,7 @@ mod tests {
         let intersection = plane.intersect(ray);
         if let Some(intersection) = intersection {
             assert_eq!(Point::new(0., 0., 0.), intersection.point);
-            assert_eq!((2f64).sqrt(), intersection.t);
+            assert_eq!((2f32).sqrt(), intersection.t);
             assert_eq!(Intersectable::from(plane), intersection.object);
         } else {
             panic!("No intersection");

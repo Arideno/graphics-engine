@@ -38,17 +38,17 @@ impl AddAssign<Color> for Color {
     }
 }
 
-impl Mul<f64> for Color {
+impl Mul<f32> for Color {
     type Output = Color;
-    fn mul(self, rhs: f64) -> Self::Output {
-        Color::new((self.r as f64 * rhs) as u8, (self.g as f64 * rhs) as u8, (self.b as f64 * rhs) as u8)
+    fn mul(self, rhs: f32) -> Self::Output {
+        Color::new((self.r as f32 * rhs) as u8, (self.g as f32 * rhs) as u8, (self.b as f32 * rhs) as u8)
     }
 }
 
-impl MulAssign<f64> for Color {
-    fn mul_assign(&mut self, rhs: f64) {
-        self.r = (self.r as f64 * rhs) as u8;
-        self.g = (self.g as f64 * rhs) as u8;
-        self.b = (self.b as f64 * rhs) as u8;
+impl MulAssign<f32> for Color {
+    fn mul_assign(&mut self, rhs: f32) {
+        self.r = (self.r as f32 * rhs) as u8;
+        self.g = (self.g as f32 * rhs) as u8;
+        self.b = (self.b as f32 * rhs) as u8;
     }
 }

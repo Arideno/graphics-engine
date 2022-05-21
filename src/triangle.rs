@@ -1,4 +1,4 @@
-use crate::{point::Point, intersection::Intersection, ray::Ray, vector::Vector};
+use crate::{point::Point, intersection::Intersection, ray::Ray, vector::Vector, matrix::Matrix};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Triangle {
@@ -70,6 +70,17 @@ impl Triangle {
         let e1 = self.v1 - self.v0;
         let e2 = self.v2 - self.v0;
         e1.cross(e2).normalize()
+    }
+
+    pub fn apply_transform(self, transform: &Matrix) -> Triangle {
+        Triangle {
+            v0: (&transform.multiply(&self.v0.into())).into(),
+            v1: (&transform.multiply(&self.v1.into())).into(),
+            v2: (&transform.multiply(&self.v2.into())).into(),
+            n1: self.n1.map(|n| Vector::from(&transform.multiply(&n.into()))),
+            n2: self.n2.map(|n| Vector::from(&transform.multiply(&n.into()))),
+            n3: self.n3.map(|n| Vector::from(&transform.multiply(&n.into())))
+        }
     }
 }
 
