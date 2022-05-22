@@ -4,7 +4,7 @@ use image::{Rgb, RgbImage};
 use pbr::ProgressBar;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use crate::{scene::Scene, light::Light, color::Color, intersection::Intersection};
+use crate::{scene::Scene, light::Light, color::Color, intersection::Intersection, ray::Ray};
 
 pub enum Renderer<'a> {
     Console(Console<'a>),
@@ -40,7 +40,7 @@ impl<'a> Console<'a> {
 
                 let mut symbol = ' ';
 
-                if let Some(intersection) = self.scene.intersect(ray) {
+                if let Some(intersection) = self.scene.closest_intersection(ray) {
                     let Intersection { object, point, .. } = intersection;
                     match self.scene.lights[0] {
                         Light::Directional(light) => {
@@ -114,18 +114,26 @@ impl<'a> Png<'a> {
 
                 let mut color = Color::new(0, 0, 0);
 
-                if let Some(intersection) = self.scene.intersect(ray) {
+                if let Some(intersection) = self.scene.closest_intersection(ray) {
                     let Intersection { object, point, .. } = intersection;
                     for l in &self.scene.lights {
                         match l {
                             Light::Directional(light) => {
-                                let normal = object.normal_at_point(point);
-                                let product = -light.direction.dot(normal);
-                                if product < 0. {
-                                    continue;
-                                }
+                                let reverse_light_direction = -light.direction.normalize();
+                                let ray = Ray::new(point + reverse_light_direction * 0.00001, reverse_light_direction);
 
-                                color += Color::new(255, 255, 255) * product;
+                                if self.scene.intersection(ray) == None {
+                                    let normal = object.normal_at_point(point);
+
+                                    let product = reverse_light_direction.dot(normal);
+                                    if product < 0. {
+                                        continue;
+                                    }
+
+                                    color += Color::new(255, 255, 255) * product;
+                                } else {
+                                    // color += Color::new(20, 20, 20);
+                                }
                             }
                         }
                     }

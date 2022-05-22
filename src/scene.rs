@@ -19,7 +19,7 @@ impl Scene {
         self.camera.ray_for_pixel(x, y)
     }
 
-    pub fn intersect(&self, ray: Ray) -> Option<Intersection> {
+    pub fn closest_intersection(&self, ray: Ray) -> Option<Intersection> {
         let mut closest_intersection: Option<Intersection> = None;
 
         for object in &self.objects {
@@ -31,6 +31,16 @@ impl Scene {
         }
 
         closest_intersection
+    }
+
+    pub fn intersection(&self, ray: Ray) -> Option<Intersection> {
+        for object in &self.objects {
+            if let Some(intersection) = object.intersect(ray) {
+                return Some(intersection)
+            }
+        }
+
+        None
     }
 
     pub fn add_intersectable(&mut self, intersectable: Intersectable) {
@@ -72,7 +82,7 @@ mod tests {
         let origin = Point::new(0., 20., 0.);
         let direction = Vector::new(0., -1., 0.);
         let ray = Ray::new(origin, direction);
-        let intersection = scene.intersect(ray);
+        let intersection = scene.closest_intersection(ray);
         if let Some(intersection) = intersection {
             assert_eq!(Point::new(0., 7., 0.), intersection.point);
             assert_eq!(13., intersection.t);

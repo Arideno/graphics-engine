@@ -22,47 +22,50 @@ impl Triangle {
     pub fn intersect(self, ray: Ray) -> Option<Intersection> {
         let e1 = self.v1 - self.v0;
         let e2 = self.v2 - self.v0;
-
         let p = ray.direction.cross(e2);
         let det = e1.dot(p);
 
         if det == 0. {
-            None
-        } else {
-            let inv_det = 1. / det;
-            let t = ray.origin - self.v0;
-            let u = t.dot(p) * inv_det;
-            if u < 0. || u > 1. {
-                None
-            } else {
-                let q = t.cross(e1);
-                let v = ray.direction.dot(q) * inv_det;
-                if v < 0. || u + v > 1. {
-                    None
-                } else {
-                    let t = e2.dot(q) * inv_det;
-                    Some(Intersection {
-                        t: t,
-                        point: ray.at(t),
-                        object: self.into()
-                    })
-                }
-            }
+            return None;
         }
+
+        let inv_det = 1.0 / det;
+        let t = ray.origin - self.v0;
+        let u = t.dot(p) * inv_det;
+        if u < 0.0 || u > 1.0 {
+            return None;
+        }
+
+        let q = t.cross(e1);
+        let v = ray.direction.dot(q) * inv_det;
+        if v < 0.0 || u + v > 1.0 {
+            return None;
+        }
+
+        let t = e2.dot(q) * inv_det;
+
+        if t > 0. {
+            return Some(Intersection {
+                t,
+                object: self.into(),
+                point: ray.at(t),
+            });
+        }
+
+        None
     }
 
     pub fn normal_at_point(self, point: Point) -> Vector {
         if let Some(n1) = self.n1 {
             if let Some(n2) = self.n2 {
                 if let Some(n3) = self.n3 {
-                    let s1 = (self.v0 - point).len();
-                    let s2 = (self.v1 - point).len();
-                    let s3 = (self.v2 - point).len();
-                    let s_sum = s1 + s2 + s3;
-                    let s1 = s1 / s_sum;
-                    let s2 = s2 / s_sum;
-                    let s3 = s3 / s_sum;
-                    return n1 * s1 + n2 * s2 + n3 * s3;
+                    let v0 = self.v0 - point;
+                    let v1 = self.v1 - point;
+                    let v2 = self.v2 - point;
+                    let u = v1.cross(v2).dot(v0) / n1.dot(n1);
+                    let v = v2.cross(v0).dot(v1) / n2.dot(n2);
+                    let w = 1.0 - u - v;
+                    return n1 * u + n2 * v + n3 * w;
                 }
             }
         }
