@@ -1,4 +1,4 @@
-use crate::{point::Point, vector::Vector, ray::Ray, intersection::Intersection, matrix::Matrix};
+use crate::{point::Point, vector::Vector, ray::Ray, intersection::Intersection, matrix::Matrix, EPSILON, aabb::{Bounded, AABB}};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Plane {
@@ -13,7 +13,7 @@ impl Plane {
 
     pub fn intersect(self, ray: Ray) -> Option<Intersection> {
         let denominator = -self.normal.dot(ray.direction);
-        if denominator > 0. {
+        if denominator > EPSILON {
             let numerator = -self.normal.dot(self.point - ray.origin);
             let t = numerator / denominator;
             if t >= 0.0 {
@@ -39,6 +39,15 @@ impl Plane {
             normal: Vector::from(&transform.multiply(&self.normal.into())).normalize(),
             point: (&transform.multiply(&self.point.into())).into()
         }
+    }
+}
+
+impl Bounded for Plane {
+    fn aabb(&self) -> AABB {
+        AABB::with_bounds(
+            Point::new(f32::NEG_INFINITY, f32::NEG_INFINITY, f32::NEG_INFINITY),
+            Point::new(f32::INFINITY, f32::INFINITY, f32::INFINITY)
+        )
     }
 }
 

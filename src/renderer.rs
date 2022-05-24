@@ -4,7 +4,7 @@ use image::{Rgb, RgbImage};
 use pbr::ProgressBar;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use crate::{scene::Scene, light::Light, color::Color, intersection::Intersection, ray::Ray};
+use crate::{scene::Scene, light::Light, color::Color, intersection::Intersection, ray::Ray, bvh::BVH, intersectable::Intersectable};
 
 pub enum Renderer<'a> {
     Console(Console<'a>),
@@ -87,6 +87,14 @@ impl<'a> Png<'a> {
     }
 
     pub fn render(&self) {
+        let mut objects: Vec<Box<Intersectable>> = vec![];
+        for object in &self.scene.objects {
+            objects.push(Box::new(object.clone()));
+        }
+
+        let tree = BVH::new(objects, 0, 2000);
+        println!("Built");
+
         let thread_progress = Arc::new(AtomicU64::new(0));
         let thread_pb = Arc::new(Mutex::new(ProgressBar::new((self.width * self.height) as u64)));
         let pb = Some(thread_pb.clone());
@@ -114,7 +122,7 @@ impl<'a> Png<'a> {
 
                 let mut color = Color::new(0, 0, 0);
 
-                if let Some(intersection) = self.scene.closest_intersection(ray) {
+                if let Some(intersection) = tree.intersect(ray) {
                     let Intersection { object, point, .. } = intersection;
                     for l in &self.scene.lights {
                         match l {
@@ -122,7 +130,7 @@ impl<'a> Png<'a> {
                                 let reverse_light_direction = -light.direction.normalize();
                                 let ray = Ray::new(point + reverse_light_direction * 0.00001, reverse_light_direction);
 
-                                if self.scene.intersection(ray) == None {
+                                if tree.intersect(ray) == None {
                                     let normal = object.normal_at_point(point);
 
                                     let product = reverse_light_direction.dot(normal);

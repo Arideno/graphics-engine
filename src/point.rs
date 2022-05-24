@@ -1,4 +1,4 @@
-use std::ops::{Sub, Add};
+use std::ops::{Sub, Add, Index, IndexMut};
 
 use crate::{vector::Vector, matrix::Matrix, m};
 
@@ -66,6 +66,30 @@ impl Into<Matrix> for Point {
             self.z;
             1.
         ]
+    }
+}
+
+impl Index<usize> for Point {
+    type Output = f32;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("Index out of bounds")
+        }
+    }
+}
+
+impl IndexMut<usize> for Point {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("Index out of bounds")
+        }
     }
 }
 

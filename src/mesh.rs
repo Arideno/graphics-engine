@@ -1,5 +1,7 @@
 use std::fs;
 
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+
 use crate::{triangle::{Triangle}, point::Point, vector::Vector, matrix::Matrix};
 
 #[derive(Clone, Debug, PartialEq)]
@@ -58,17 +60,14 @@ impl Mesh {
                 }
             }
         }
+        println!("loaded");
         Some(Mesh {
             triangles
         })
     }
 
     pub fn apply_transform(&self, transform: &Matrix) -> Mesh {
-        let mut new_triangles = vec![];
-        for triangle in &self.triangles {
-            let new_triangle = triangle.apply_transform(transform);
-            new_triangles.push(new_triangle);
-        }
+        let new_triangles = self.triangles.par_iter().map(|t| t.apply_transform(transform)).collect::<Vec<_>>();
         Mesh {
             triangles: new_triangles
         }

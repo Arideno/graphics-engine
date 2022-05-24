@@ -1,4 +1,4 @@
-use crate::{point::Point, intersection::Intersection, ray::Ray, vector::Vector, matrix::Matrix};
+use crate::{point::Point, intersection::Intersection, ray::Ray, vector::Vector, matrix::Matrix, EPSILON, aabb::{Bounded, AABB}};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Triangle {
@@ -25,26 +25,26 @@ impl Triangle {
         let p = ray.direction.cross(e2);
         let det = e1.dot(p);
 
-        if det == 0. {
+        if det.abs() < EPSILON {
             return None;
         }
 
         let inv_det = 1.0 / det;
         let t = ray.origin - self.v0;
         let u = t.dot(p) * inv_det;
-        if u < 0.0 || u > 1.0 {
+        if u < 0. || u > 1. {
             return None;
         }
 
         let q = t.cross(e1);
         let v = ray.direction.dot(q) * inv_det;
-        if v < 0.0 || u + v > 1.0 {
+        if v < 0. || u + v > 1. {
             return None;
         }
 
         let t = e2.dot(q) * inv_det;
 
-        if t > 0. {
+        if t > EPSILON {
             return Some(Intersection {
                 t,
                 object: self.into(),
@@ -84,6 +84,23 @@ impl Triangle {
             n2: self.n2.map(|n| Vector::from(&transform.multiply(&n.into()))),
             n3: self.n3.map(|n| Vector::from(&transform.multiply(&n.into())))
         }
+    }
+}
+
+impl Bounded for Triangle {
+    fn aabb(&self) -> AABB {
+        let mut min = self.v0;
+        let mut max = self.v0;
+
+        min.x = min.x.min(self.v1.x).min(self.v2.x);
+        min.y = min.y.min(self.v1.y).min(self.v2.y);
+        min.z = min.z.min(self.v1.z).min(self.v2.z);
+
+        max.x = max.x.max(self.v1.x).max(self.v2.x);
+        max.y = max.y.max(self.v1.y).max(self.v2.y);
+        max.z = max.z.max(self.v1.z).max(self.v2.z);
+
+        AABB::with_bounds(min, max)
     }
 }
 

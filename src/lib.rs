@@ -14,3 +14,7 @@ pub mod color;
 pub mod triangle;
 pub mod mesh;
 pub mod matrix;
+pub mod aabb;
+pub mod bvh;
+
+pub const EPSILON: f32 = 1e-6;

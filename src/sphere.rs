@@ -1,4 +1,4 @@
-use crate::{point::Point, ray::Ray, intersection::Intersection, vector::Vector, matrix::Matrix};
+use crate::{point::Point, ray::Ray, intersection::Intersection, vector::Vector, matrix::Matrix, EPSILON, aabb::{Bounded, AABB}};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Sphere {
@@ -21,7 +21,7 @@ impl Sphere {
         if discriminant > 0.0 {
             let root = discriminant.sqrt();
             let t = (-half_b - root) / a;
-            if t > 0.0 {
+            if t > EPSILON {
                 Some(Intersection {
                     t,
                     point: ray.at(t),
@@ -29,7 +29,7 @@ impl Sphere {
                 })
             } else {
                 let t = (-half_b + root) / a;
-                if t > 0.0 {
+                if t > EPSILON {
                     Some(Intersection {
                         t,
                         point: ray.at(t),
@@ -53,6 +53,15 @@ impl Sphere {
             center: (&transform.multiply(&self.center.into())).into(),
             radius: self.radius
         }
+    }
+}
+
+impl Bounded for Sphere {
+    fn aabb(&self) -> AABB {
+        let min = self.center - Vector::new(self.radius, self.radius, self.radius);
+        let max = self.center + Vector::new(self.radius, self.radius, self.radius);
+
+        AABB::with_bounds(min, max)
     }
 }
 
